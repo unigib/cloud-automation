@@ -1,0 +1,18 @@
+[Unit]
+Description=Student lab guestbook
+Wants=network-online.target
+After=network-online.target mariadb.service
+Requires=mariadb.service
+
+[Service]
+Type=simple
+User=labapp
+WorkingDirectory=/opt/student-lab
+EnvironmentFile=/opt/student-lab/environment
+ExecStartPre=+/opt/student-lab/venv/bin/python /opt/student-lab/init_db.py
+ExecStart=/opt/student-lab/venv/bin/gunicorn --bind 0.0.0.0:8080 --workers 2 app:app
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
